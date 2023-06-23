@@ -10,6 +10,7 @@ import {
   KeyboardAvoidingView,
   Keyboard,
   TouchableWithoutFeedback,
+  Alert
 } from "react-native";
 
  
@@ -34,26 +35,29 @@ export const LoginScreen = () => {
           style={styles.image}
         >
           <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            // behavior={Platform.OS === "android" ? "height" : "padding"}
           >
             <View
               style={{
                 ...styles.formWrapper,
 
-                // ...Platform.select({
+                ...Platform.select({
                 //   ios: {
                 //     marginTop: isShowKeyboard ? 456 : 0,
                 //   },
-                //   android: {
-                //     marginTop: isShowKeyboard ? -50 : 0,
-                //   },
-                // }),
+                  'android': {
+                    marginTop: isShowKeyboard ? 273 : 323,
+                    // paddingBottom: isShowKeyboard ? 32 : 111,
+                    // paddingTop: isShowKeyboard ? 32 : 32,
+                    // marginBottom: isShowKeyboard ? 200 : 0,
+                  },
+                }),
               }}
             >
               <Text
                 style={{
                   ...styles.title,
-                  //   marginTop: isShowKeyboard ? 24 : 0,
+                    // marginTop: isShowKeyboard ? 24 : 0,
                 }}
               >
                 Увійти
@@ -62,7 +66,7 @@ export const LoginScreen = () => {
               <View
                 style={{
                   ...styles.form,
-                  paddingBottom: isShowKeyboard ? 32 : 111,
+                //   paddingBottom: isShowKeyboard ? 32 : 70,
                 }}
               >
                 <View style={styles.inputMail}>
@@ -77,22 +81,26 @@ export const LoginScreen = () => {
                     textAlign={"left"}
                     placeholderTextColor={"#BDBDBD"}
                     keyboardType="email-address"
-                    textContentType="email"
+                    textContentType="emailAddress"
                     value={state.email}
                     placeholder="Адреса електронної пошти"
+
                     onFocus={() => {
-                      setIsShowKeyboard(true),
+                      setIsShowKeyboard(true);
                         setIsFocusInput({
                           ...isFocusInput,
                           email: true,
                         });
                     }}
+
                     onBlur={() => {
+                        setIsShowKeyboard(false);
                       setIsFocusInput({
                         ...isFocusInput,
                         email: false,
                       });
                     }}
+
                     onChangeText={(value) =>
                       setState((prevState) => ({
                         ...prevState,
@@ -127,6 +135,7 @@ export const LoginScreen = () => {
                         });
                     }}
                     onBlur={() => {
+                        setIsShowKeyboard(false);
                       setIsFocusInput({
                         ...isFocusInput,
                         password: false,
@@ -190,7 +199,7 @@ const styles = StyleSheet.create({
     paddingTop: 32,
     paddingLeft: 16,
     paddingRight: 16,
-    // paddingBottom: 144,
+    paddingBottom: 144,
     backgroundColor: "#FFFFFF",
     borderTopRightRadius: 25,
     borderTopLeftRadius: 25,
@@ -236,7 +245,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     position: "absolute",
     top: 16,
-    left: 245,
+    // left: 260,
+    right: 15,
     color: "#1B4371",
   },
   button: {

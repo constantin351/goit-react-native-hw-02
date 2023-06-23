@@ -19,9 +19,9 @@ export default function App() {
     <View style={styles.container}>
         <RegistrationScreen />
 
-        <LoginScreen />
+        {/* <LoginScreen /> */}
 
-        <PostsScreen />
+        {/* <PostsScreen /> */}
         
         <StatusBar style="auto" />
     </View>
@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     // alignItems: 'center',
-    justifyContent: 'center',
+    // justifyContent: 'center',
   },
 });
     

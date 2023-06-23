@@ -1,5 +1,18 @@
 import React, {useState} from "react";
-import { StyleSheet, ImageBackground, View, Image, Text, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, TextInput, Alert, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  ImageBackground,
+  View,
+  Image,
+  Text,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
+  TextInput,
+  Alert,
+  TouchableOpacity,
+} from "react-native";
 import photoBG from "../images/photo-BG-2x.jpg";
 
 
@@ -33,17 +46,19 @@ export const RegistrationScreen = () => {
       <View style={styles.container}>
         <ImageBackground source={photoBG} style={styles.imageBg}>
           <KeyboardAvoidingView
-            behavior={Platform.OS == "ios" ? "padding" : "height"}
+            // behavior={Platform.OS === "android" ? "height" : "padding"}
           >
             <View
               style={{
                 ...styles.formContainer,
                 ...Platform.select({
-                  ios: {
-                    marginTop: isKeyboardShown ? 195 : 219,
-                  },
-                  android: {
-                    marginTop: isKeyboardShown ? -100 : 0,
+                //   ios: {
+                //     marginTop: isKeyboardShown ? 195 : 219,
+                //   },
+                  'android': {
+                    marginTop: isKeyboardShown ? 147 : 263,
+                    // marginBottom: isKeyboardShown ? 291 : 0,
+
                   },
                 }),
               }}
@@ -96,17 +111,18 @@ export const RegistrationScreen = () => {
                         : "#F6F6F6",
                     }}
                     placeholderTextColor={"#BDBDBD"}
-                    textContentType="userName"
+                    textContentType="name"
                     value={state.userName}
                     placeholder="Логін"
                     onFocus={() => {
-                      setIsKeyboardShown(true),
+                      setIsKeyboardShown(true);
                         setIsFocusInput({
                           ...isFocusInput,
                           userName: true,
                         });
                     }}
                     onBlur={() => {
+                        setIsKeyboardShown(true);
                       setIsFocusInput({
                         ...isFocusInput,
                         userName: false,
@@ -132,17 +148,18 @@ export const RegistrationScreen = () => {
                     }}
                     placeholderTextColor={"#BDBDBD"}
                     keyboardType="email-address"
-                    textContentType="email"
+                    textContentType="emailAddress"
                     value={state.email}
                     placeholder="Адреса електронної пошти"
                     onFocus={() => {
-                      setIsKeyboardShown(true),
+                      setIsKeyboardShown(true);
                         setIsFocusInput({
                           ...isFocusInput,
                           email: true,
                         });
                     }}
                     onBlur={() => {
+                    setIsKeyboardShown(true);
                       setIsFocusInput({
                         ...isFocusInput,
                         email: false,
@@ -178,6 +195,7 @@ export const RegistrationScreen = () => {
                         });
                     }}
                     onBlur={() => {
+                        setIsKeyboardShown(true);
                       setIsFocusInput({
                         ...isFocusInput,
                         password: false,
@@ -244,7 +262,7 @@ const styles = StyleSheet.create({
     paddingTop: 92,
     paddingLeft: 16,
     paddingRight: 16,
-    // paddingBottom: 78,
+    paddingBottom: 10,
     backgroundColor: "#FFFFFF",
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
