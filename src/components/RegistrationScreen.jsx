@@ -6,7 +6,6 @@ import {
   Image,
   Text,
   KeyboardAvoidingView,
-  Platform,
   TouchableWithoutFeedback,
   Keyboard,
   TextInput,
@@ -14,12 +13,13 @@ import {
   TouchableOpacity,
 } from "react-native";
 import photoBG from "../images/photo-BG-2x.jpg";
+import { useNavigation } from "@react-navigation/native";
+import * as ImagePicker from "expo-image-picker";
 
 
 export const RegistrationScreen = () => {
+  const navigation = useNavigation();
   const [photo, setPhoto] = useState(null);
-  // const [visible, setVisible] = useState(false);
-
   const [isKeyboardShown, setIsKeyboardShown] = useState(false);
 
   const [state, setState] = useState({
@@ -37,33 +37,41 @@ export const RegistrationScreen = () => {
 
   const [isShowPassword, setIsShowPassword] = useState(true);
 
+  const handleAddImage = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== "granted") {
+      Alert.alert("Sorry, we have no access to your photo libriary!");
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (result.assets.length > 0) {
+      setPhoto(result.assets[0]);
+    }
+  };
+
   const handleSubmit = () => {
     Alert.alert("Credentials", `${state.userName} + ${state.email} + ${state.password}`);
+    navigation.navigate("Home");
+  };
+
+  const clearPhoto = () => {
+    setPhoto(null);
   };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
         <ImageBackground source={photoBG} style={styles.imageBg}>
-          <KeyboardAvoidingView
-            // behavior={Platform.OS === "android" ? "height" : "padding"}
-          >
-            <View
-              style={{
-                ...styles.formContainer,
-                ...Platform.select({
-                //   ios: {
-                //     marginTop: isKeyboardShown ? 195 : 219,
-                //   },
-                  'android': {
-                    marginTop: isKeyboardShown ? 147 : 263,
-                    // marginBottom: isKeyboardShown ? 291 : 0,
-
-                  },
-                }),
-              }}
-            >
-              <View style={styles.imgBox}>
+          <KeyboardAvoidingView>
+            <View style={styles.formContainer}>
+              <View style={styles.avatarBox}>
                 {photo ? (
                   <View>
                     <Image style={styles.avatar} source={{ uri: photo.uri }} />
@@ -80,7 +88,7 @@ export const RegistrationScreen = () => {
                 ) : (
                   <View style={styles.iconBtn}>
                     <TouchableOpacity
-                    // onPress={handleAddImage}
+                    onPress={handleAddImage}
                     >
                       <Image
                         style={styles.iconAddDel}
@@ -93,12 +101,7 @@ export const RegistrationScreen = () => {
 
               <Text style={styles.registerTitle}>Реєстрація</Text>
 
-              <View
-                style={{
-                  //   ...styles.form,
-                  paddingBottom: isKeyboardShown ? 32 : 45,
-                }}
-              >
+              <View style={styles.form}>
                 <View style={styles.inputName}>
                   <TextInput
                     style={{
@@ -219,13 +222,7 @@ export const RegistrationScreen = () => {
                   </Text>
                 </View>
 
-                <TouchableOpacity
-                  style={{
-                    ...styles.registerBtn,
-                    marginTop: isKeyboardShown ? 30 : 43,
-                  }}
-                  onPress={handleSubmit}
-                >
+                <TouchableOpacity style={styles.registerBtn} onPress={handleSubmit}>
                   <Text style={styles.registerBtnText}>Зареєструватися</Text>
                 </TouchableOpacity>
 
@@ -275,7 +272,7 @@ const styles = StyleSheet.create({
     // position: "relative",
     // alignItems: "self-end",
   },
-  imgBox: {
+  avatarBox: {
     position: "absolute",
     left: "35%",
     top: "-15%",
@@ -316,6 +313,9 @@ const styles = StyleSheet.create({
     // marginTop: 92,
     // marginBottom: 33,
   },
+  form: {
+    marginBottom: 45,
+  },
   input: {
     // width: 343,
     fontFamily: "Roboto",
@@ -330,8 +330,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     height: 50,
     borderRadius: 8,
-    // paddingVertical: 15,
-    // paddingHorizontal: 16,
     backgroundColor: "#F6F6F6",
     borderStyle: "solid",
     borderColor: "#E8E8E8",
@@ -352,10 +350,8 @@ const styles = StyleSheet.create({
     lineHeight: 19,
     fontSize: 16,
     position: "absolute",
-
     top: 16,
     right: 16,
-
     fontWeight: 400,
     color: "#1B4371",
   },
@@ -365,9 +361,7 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     alignContent: "center",
     justifyContent: "center",
-    // padding: "16px 32px",
     paddingVertical: 16,
-    // // paddingHorizontal: 16,
     // paddingTop: 16,
     // paddingBottom: 16,
     marginTop: 43,

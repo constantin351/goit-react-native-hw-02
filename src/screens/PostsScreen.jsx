@@ -1,54 +1,124 @@
-import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
-import { Feather, SimpleLineIcons, AntDesign } from "@expo/vector-icons";
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  FlatList,
+} from "react-native";
+import { Feather } from "@expo/vector-icons";
+// import { useSelector } from "react-redux";
 
-export const PostsScreen = () => {
+export const PostsScreen = ({ navigation }) => {
+  const [posts, setPosts] = useState([
+    {
+      photo: "",
+      comment: "my comment here",
+      id: "1",
+      location: "Ukraine",
+      locationName: "Kiev",
+    },
+    {
+      photo: "",
+      comment: "my comment here",
+      id: "2",
+      location: "ukraine",
+      locationName: "dnepr",
+    },
+  ]);
+  const [commentsCount, setCommentsCount] = useState(0);
+  // const { userName, userEmail, photo } = useSelector((state) => state.auth);
+
   return (
     <View style={styles.container}>
-      <View style={styles.headWrapper}>
-        <Text style={styles.title}>Публікації</Text>
+      <View style={styles.userInfo}>
+        <View style={styles.imgBox}>
+          <Image
+            style={styles.avatar}
+            source={require("../images/avatar.png")}
+            // source={{ uri: photo }}
+          />
+        </View>
 
-        <TouchableOpacity
-          style={styles.logoutIcon}
-          // onPress={signOut}
-        >
-          <Feather name="log-out" size={24} color="#BDBDBD" />
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.postsWrapper}>
-        <View style={styles.userInfo}>
-          <View style={styles.imgBox}>
-            <Image
-              style={styles.avatar}
-              source={require("../images/avatar.png")}
-              // source={{ uri: photo }}
-            />
-          </View>
-
-          <View style={styles.user}>
-            <Text style={styles.name}>Natali Romanova</Text>
-            <Text style={styles.email}>email@example.com</Text>
-          </View>
+        <View style={styles.user}>
+          <Text style={styles.name}>Natali Romanova{/* {userName} */}</Text>
+          <Text style={styles.email}>email@example.com{/* {userEmail} */}</Text>
         </View>
       </View>
 
-      <View style={styles.tabBarWrapper}>
-        <TouchableOpacity style={styles.gridButton}>
-          <SimpleLineIcons name="grid" size={24} color="#212121" />
-        </TouchableOpacity>
+      {posts.length === 0 && (
+        <View style={styles.noPostsTextWrapper}>
+          <Text style={styles.noPostsText}>Немає публікацій</Text>
+          <TouchableOpacity onPress={() => navigation.navigate("CreatePost")}>
+            <Text style={styles.createPostLink}>Створити публікацію?</Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
-        <TouchableOpacity
-          style={styles.addPostButton}
-          activeOpacity={0.8}
-          //   onPress={handleSubmit}
-        >
-          <AntDesign name="plus" size={13} color="#FFFFFF" />
-        </TouchableOpacity>
+      {posts && (
+        <FlatList
+          data={posts}
+          keyExtractor={(item, index) => {
+            index.toString();
+          }}
+          renderItem={({ item }) => (
+            <View>
+              <Image
+                // source={{ uri: item.photo }}
+                style={styles.post}
+              />
 
-        <TouchableOpacity style={styles.userButton}>
-          <AntDesign name="user" size={24} color="#212121" />
-        </TouchableOpacity>
-      </View>
+              <Text style={styles.title}>{item.comment}</Text>
+
+              <View style={styles.box}>
+                <View style={styles.commentWrapper}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate("Comments", {
+                        prevScreen: "Home",
+                        postId: item.id,
+                        photo: item.photo,
+                      })
+                    }
+                  >
+                    <Feather name="message-circle" size={24} color="#BDBDBD" />
+                  </TouchableOpacity>
+                  <Text style={styles.commentsCount}>
+                    {commentsCount[item.id] || 0}
+                  </Text>
+                </View>
+
+                <View style={styles.wrapperLocation}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate("Map", {
+                        location: item.location,
+                      })
+                    }
+                  >
+                    <Feather
+                      name="map-pin"
+                      size={24}
+                      color={"#BDBDBD"}
+                    />
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate("Map", {
+                        location: item.location,
+                      })
+                    }
+                  >
+                    <Text style={styles.locationName}>{item.locationName}</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          )}
+        />
+      )}
     </View>
   );
 };
@@ -58,58 +128,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#FFFFFF",
     paddingHorizontal: 15,
-    // paddingLeft: 16,
-    // paddingRight: 16,
     // paddingTop: 55,
     // paddingBottom: 11,
-    boxShadow: "0px 0.5px 0px rgba(0, 0, 0, 0.3)",
-    // shadowOpacity
-  },
-  title: {
-    fontFamily: "Roboto",
-    fontStyle: "normal",
-    fontSize: 17,
-    fontWeight: 500,
-    lineHeight: 22,
-    letterSpacing: -0.408,
-    color: "#212121",
-    textAlign: "center",
-    marginRight: 109,
-  },
-  headWrapper: {
-    display: "flex",
-    flexDirection: "row",
-    // marginTop: 27,
-    alignItems: "center",
-    justifyContent: "end",
-    paddingBottom: 11,
-    paddingTop: 55,
-    paddingRight: 10,
-    paddingLeft: 10,
-    // shadowColor: "#000",
-    // shadowOffset: {
-    //     width: 0,
-    //     height: 1,
-    // },
-    // shadowOpacity: 0.18,
-    // shadowRadius: 1.00,
-    // elevation: 1,
-  },
-  logoutIcon: {},
-  postsWrapper: {
-    height: 641,
-    borderTopColor: "#000000",
-    borderTopWidth: 1,
-    borderBottomColor: "#000000",
-    borderBottomWidth: 1,
-    // shadowColor: "#000",
-    // shadowOffset: {
-    //     width: 0,
-    //     height: 1,
-    // },
-    // shadowOpacity: 0.18,
-    // shadowRadius: 1.00,
-    // elevation: 1,
   },
   userInfo: {
     flexDirection: "row",
@@ -143,31 +163,75 @@ const styles = StyleSheet.create({
     fontStyle: "normal",
     fontSize: 11,
     lineHeight: 13,
+    color: "#212121CC",
+  },
+  noPostsTextWrapper: {
+    flex: 1,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  noPostsText: {
+    fontFamily: "Roboto",
+    fontStyle: "normal",
+    fontSize: 16,
+    color: "#b1aaaa",
+    marginBottom: 14,
+  },
+  createPostLink: {
+    fontFamily: "Roboto",
+    fontStyle: "normal",
+    fontSize: 16,
+    color: "#1B4371",
+    textDecorationLine: "underline",
+  },
+  post: {
+    width: "100%",
+    height: 240,
+    borderRadius: 8,
+    //
+    backgroundColor: "#b1aaaa",
+  },
+  title: {
+    marginTop: 8,
+    marginBottom: 8,
+    fontFamily: "Roboto",
+    fontStyle: "normal",
+    fontSize: 16,
+    lineHeight: 19,
     color: "#212121",
   },
-
-  tabBarWrapper: {
+  box: {
+    display: "flex",
+    justifyContent: "space-between",
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 34,
+  },
+  commentWrapper: {
     display: "flex",
     flexDirection: "row",
-    justifyContent: "center",
     alignItems: "center",
-    paddingTop: 9,
-    paddingBottom: 34,
-    // paddingRight: 89,
-    // paddingLeft: 90,
   },
-  gridButton: {
-    marginRight: 39,
+  commentsCount: {
+    fontFamily: "Roboto",
+    fontSize: 16,
+    lineHeight: 19,
+    color: "#BDBDBD",
+    marginLeft: 6,
   },
-  addPostButton: {
-    width: 70,
-    height: 40,
-    backgroundColor: "#FF6C00",
-    borderRadius: 20,
+  wrapperLocation: {
     display: "flex",
-    justifyContent: "center",
+    flexDirection: "row",
     alignItems: "center",
-    marginRight: 39,
   },
-  userButton: {},
+  locationName: {
+    fontFamily: "Roboto",
+    fontStyle: "normal",
+    fontSize: 16,
+    lineHeight: 19,
+    color: "#212121",
+    textDecorationLine: "underline",
+    marginLeft: 4,
+  },
 });

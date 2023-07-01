@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   TextInput,
@@ -6,15 +6,17 @@ import {
   ImageBackground,
   Text,
   TouchableOpacity,
-  Platform,
   KeyboardAvoidingView,
   Keyboard,
   TouchableWithoutFeedback,
   Alert
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
  
 export const LoginScreen = () => {
+  const navigation = useNavigation();
+
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [state, setState] = useState({ email: "", password: "" });
   const [isFocusInput, setIsFocusInput] = useState({
@@ -25,6 +27,7 @@ export const LoginScreen = () => {
 
   const handleSubmit = () => {
     Alert.alert("Credentials", `${state.email} + ${state.password}`);
+    navigation.navigate("Home");
   };
 
   return (
@@ -34,41 +37,11 @@ export const LoginScreen = () => {
           source={require("../images/photo-BG-2x.jpg")}
           style={styles.image}
         >
-          <KeyboardAvoidingView
-            // behavior={Platform.OS === "android" ? "height" : "padding"}
-          >
-            <View
-              style={{
-                ...styles.formWrapper,
+          <KeyboardAvoidingView>
+            <View style={styles.formWrapper}>
+              <Text style={styles.title}>Увійти</Text>
 
-                ...Platform.select({
-                //   ios: {
-                //     marginTop: isShowKeyboard ? 456 : 0,
-                //   },
-                  'android': {
-                    marginTop: isShowKeyboard ? 273 : 323,
-                    // paddingBottom: isShowKeyboard ? 32 : 111,
-                    // paddingTop: isShowKeyboard ? 32 : 32,
-                    // marginBottom: isShowKeyboard ? 200 : 0,
-                  },
-                }),
-              }}
-            >
-              <Text
-                style={{
-                  ...styles.title,
-                    // marginTop: isShowKeyboard ? 24 : 0,
-                }}
-              >
-                Увійти
-              </Text>
-
-              <View
-                style={{
-                  ...styles.form,
-                //   paddingBottom: isShowKeyboard ? 32 : 70,
-                }}
-              >
+              <View style={styles.form}>
                 <View style={styles.inputMail}>
                   <TextInput
                     style={{
@@ -167,9 +140,7 @@ export const LoginScreen = () => {
                   <Text style={styles.buttonText}>Увійти</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity
-                //   onPress={() => navigation.navigate("Registration")}
-                >
+                <TouchableOpacity onPress={() => navigation.navigate("Registration")}>
                   <Text style={styles.aside}>
                     Немає акаунту?{" "}
                     <Text style={styles.asideRegistreText}>
@@ -268,7 +239,9 @@ const styles = StyleSheet.create({
   aside: {
     fontFamily: "Roboto",
     fontStyle: "normal",
+    fontSize: 16,
     lineHeight: 19,
+    fontWeight: 400,
     marginTop: 16,
     textAlign: "center",
     color: "#1B4371",
