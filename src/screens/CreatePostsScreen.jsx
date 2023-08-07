@@ -55,6 +55,17 @@ export const CreatePostsScreen = ({navigation}) => {
   }, []);
 
 
+  const publishPost = async () => {
+    let location = await Location.getCurrentPositionAsync({});
+    const coords = {
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude,
+    };
+    setLocation(coords);
+
+    navigation.navigate("Posts");
+  };
+
   const deletePhoto = () => {
     setPhoto("");
     setComment("");
@@ -63,112 +74,111 @@ export const CreatePostsScreen = ({navigation}) => {
   
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-    <View style={styles.container}>
-    <KeyboardAvoidingView>
-      <View>
-        <ScrollView >
-          <Camera style={styles.camera} ref={setCameraRef}>
-            {photo && (
-              <View style={styles.previewPhotoContainer}>
-                <Image
-                  source={{ uri: photo }}
-                  style={styles.previewPhoto}
-                />
-              </View>
-            )}
-            <TouchableOpacity 
-                 style={styles.icon} 
-                 onPress={async () => {
-                  if (cameraRef) {
-                    const { uri } = await cameraRef.takePictureAsync();
-                    await MediaLibrary.createAssetAsync(uri);
-                    setPhoto(uri);
+      <View style={styles.container}>
+        <KeyboardAvoidingView>
+          <View>
+            <ScrollView>
+              <Camera style={styles.camera} ref={setCameraRef}>
+                {photo && (
+                  <View style={styles.previewPhotoContainer}>
+                    <Image
+                      source={{ uri: photo }}
+                      style={styles.previewPhoto}
+                    />
+                  </View>
+                )}
+                <TouchableOpacity
+                  style={styles.icon}
+                  onPress={async () => {
+                    if (cameraRef) {
+                      const { uri } = await cameraRef.takePictureAsync();
+                      await MediaLibrary.createAssetAsync(uri);
+                      setPhoto(uri);
+                    }
+                  }}
+                >
+                  {/* <FontAwesome name="camera" size={20} color="#BDBDBD" /> */}
+                  <MaterialCommunityIcons
+                    name="camera"
+                    size={24}
+                    color={"#BDBDBD"}
+                  />
+                </TouchableOpacity>
+              </Camera>
+
+              {photo ? (
+                <Text style={styles.text}>Редагувати фото</Text>
+              ) : (
+                <Text style={styles.text}>Завантажити фото</Text>
+              )}
+
+              <View style={styles.formWrapper}>
+                <TextInput
+                  placeholderTextColor={"#BDBDBD"}
+                  placeholder="Назва..."
+                  style={styles.inputPhotoName}
+                  value={comment}
+                  onChangeText={(value) => setComment(value)}
+                  onFocus={() => setIsShowKeyboard(true)}
+                ></TextInput>
+
+                <TextInput
+                  placeholderTextColor={"#BDBDBD"}
+                  placeholder="Місцевість..."
+                  style={styles.inputLocation}
+                  value={locationName}
+                  onChangeText={(value) => setLocationName(value)}
+                  onFocus={() => setIsShowKeyboard(true)}
+                ></TextInput>
+
+                <TouchableOpacity
+                  style={styles.locationBtn}
+                  onPress={() =>
+                    navigation.navigate("Map", {
+                      location: location,
+                      // location: location.coords,
+                    })
                   }
-                }}
-            >
-              {/* <FontAwesome name="camera" size={20} color="#BDBDBD" /> */}
-               <MaterialCommunityIcons
-                  name="camera"
-                  size={24}
-                  color={"#BDBDBD"}
-                />
-            </TouchableOpacity>
-          </Camera>
+                >
+                  <Feather
+                    name="map-pin"
+                    size={24}
+                    color={"#BDBDBD"}
+                    style={styles.mapPinIcon}
+                  />
+                </TouchableOpacity>
+              </View>
 
-          {photo ? (
-            <Text style={styles.text}>Редагувати фото</Text>
-          ) : (
-            <Text style={styles.text}>Завантажити фото</Text>
-          )}
+              {photo ? (
+                <TouchableOpacity
+                  style={styles.buttonActive}
+                  activeOpacity={0.8}
+                  onPress={publishPost}
+                >
+                  <Text style={styles.buttonTextActive}>Опублікувати</Text>
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  style={styles.button}
+                  activeOpacity={0.8}
+                  // onPress={publishPost}
+                >
+                  <Text style={styles.buttonText}>Опублікувати</Text>
+                </TouchableOpacity>
+              )}
 
-          <View style={styles.formWrapper}>
-            <TextInput
-              placeholderTextColor={"#BDBDBD"}
-              placeholder="Назва..."
-              style={styles.inputPhotoName}
-              value={comment}
-              onChangeText={(value) => setComment(value)}
-              onFocus={() => setIsShowKeyboard(true)}
-            ></TextInput>
-
-            <TextInput
-              placeholderTextColor={"#BDBDBD"}
-              placeholder="Місцевість..."
-              style={styles.inputLocation}
-              value={locationName}
-              onChangeText={(value) => setLocationName(value)}
-              onFocus={() => setIsShowKeyboard(true)}
-            ></TextInput>
-
-            <TouchableOpacity
-              style={styles.locationBtn}
-              onPress={() =>
-                navigation.navigate("Map", {
-                  location: location,
-                  // location: location.coords,
-                })}>
-
-            <Feather
-              name="map-pin"
-              size={24}
-              color={"#BDBDBD"}
-              style={styles.mapPinIcon}
-            />
-            
-            </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.deleteBtn}
+                activeOpacity={0.8}
+                onPress={deletePhoto}
+              >
+                <Feather name="trash-2" size={24} color="#BDBDBD" />
+              </TouchableOpacity>
+            </ScrollView>
           </View>
-
-          {photo ? (
-            <TouchableOpacity
-              style={styles.buttonActive}
-              activeOpacity={0.8}
-              // onPress={sendPhoto}
-            >
-              <Text style={styles.buttonTextActive}>Опублікувати</Text>
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity
-              style={styles.button}
-              activeOpacity={0.8}
-              // onPress={sendPhoto}
-            >
-              <Text style={styles.buttonText}>Опублікувати</Text>
-            </TouchableOpacity>
-          )}
-
-          <TouchableOpacity
-            style={styles.deleteBtn}
-            activeOpacity={0.8}
-            onPress={deletePhoto}
-          >
-            <Feather name="trash-2" size={24} color="#BDBDBD" />
-
-          </TouchableOpacity>
-        </ScrollView>
+        </KeyboardAvoidingView>
       </View>
-    </KeyboardAvoidingView>
-  </View>
-  </TouchableWithoutFeedback>
+    </TouchableWithoutFeedback>
   );
 }
 
